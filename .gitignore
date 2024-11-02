@@ -50,3 +50,4 @@ app.*.map.json
 /analysis_options.yaml
 /.metadata
 /pubspec.lock
+/test/
