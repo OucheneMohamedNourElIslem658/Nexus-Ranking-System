@@ -9,29 +9,32 @@ class RestOfMembers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Rest of members',
-          style: TextStyles.style7,
-        ),
-        const SizedBox(height: 15),
-        Column(
-          children: List.generate(
-            10,
-            (index) => Padding(
-              padding: EdgeInsets.only(top: index != 0 ? 10 : 0),
-              child: MemberItem(
-                name: 'You',
-                email: 'm_ouchene@estin.dz',
-                rank: 100,
-                isMe: index == 0,
-              ),
-            )
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 500),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Rest of members',
+            style: TextStyles.style7,
           ),
-        )
-      ],
+          const SizedBox(height: 15),
+          Column(
+            children: List.generate(
+              10,
+              (index) => Padding(
+                padding: EdgeInsets.only(top: index != 0 ? 10 : 0),
+                child: MemberItem(
+                  name: 'You',
+                  email: 'm_ouchene@estin.dz',
+                  rank: 100,
+                  isMe: index == 0,
+                ),
+              )
+            ),
+          )
+        ],
+      ),
     );
   }
 }

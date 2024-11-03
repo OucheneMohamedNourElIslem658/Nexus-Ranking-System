@@ -3,10 +3,10 @@ import 'package:nexus_ranking_system/constents/custom_colors.dart';
 import 'package:nexus_ranking_system/constents/text_styles.dart';
 
 enum Filter {
-  mobileFront,
-  mobileBack,
-  webFront,
-  webBack
+  all,
+  mobile,
+  web,
+  backend,
 }
 
 class FilteringButton extends StatefulWidget {
@@ -52,16 +52,15 @@ class _FilteringButtonState extends State<FilteringButton> {
     );
     final itemCount = widget.filters.length;
 
-    return LayoutBuilder(
-      builder: (context, con) {
-        return Container(
-          width: double.maxFinite,
-          padding: const EdgeInsets.all(5),
-          decoration: BoxDecoration(
-            color: CustomColors.black2,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Stack(
+    return Container(
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: CustomColors.black2,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Stack(
             alignment: Alignment.center,
             children: [
               Row(
@@ -73,7 +72,7 @@ class _FilteringButtonState extends State<FilteringButton> {
                 alignment: alignment,
                 child: Container(
                   height: 60,
-                  width: (con.maxWidth / itemCount) - 10,
+                  width: (constraints.maxWidth / itemCount) - 10,
                   decoration: BoxDecoration(
                     color: CustomColors.black3,
                     borderRadius: BorderRadius.circular(10),
@@ -104,9 +103,9 @@ class _FilteringButtonState extends State<FilteringButton> {
                 ),
               ),
             ],
-          ),
-        );
-      },
+          );
+        }
+      ),
     );
   }
 }

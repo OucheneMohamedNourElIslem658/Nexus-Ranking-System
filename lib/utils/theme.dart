@@ -10,6 +10,15 @@ class CustomTheme {
       elevation: 0,
       titleTextStyle: TextStyles.style1
     ),
-    focusColor: Colors.white
+    focusColor: Colors.white,
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 100,vertical: 20),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10)
+        ),
+        foregroundColor: Colors.white
+      ),
+    )
   );
 }

@@ -47,6 +47,16 @@ class TextStyles {
     fontSize: 15,
     color: CustomColors.grey3
   );
+  static const style10 = TextStyle(
+    fontFamily: Fonts.montserratSemiBold,
+    fontSize: 30,
+    color: Colors.white
+  );
+  static const style11 = TextStyle(
+    fontFamily: Fonts.montserratMed,
+    fontSize: 18,
+    color: CustomColors.grey3
+  );
 }
 
 class Fonts {
