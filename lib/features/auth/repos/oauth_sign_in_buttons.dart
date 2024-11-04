@@ -49,9 +49,11 @@ class GoogleSignInButton extends StatelessWidget {
             width: 30,
           ),
           const SizedBox(width: 10),
-          const Text(
-            'Sign In with Google',
-            style: TextStyles.style11,
+          const Flexible(
+            child: Text(
+              'Sign In with Google',
+              style: TextStyles.style11,
+            ),
           ),
         ],
       ),

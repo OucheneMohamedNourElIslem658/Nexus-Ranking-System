@@ -9,7 +9,6 @@ import 'package:nexus_ranking_system/features/rank/widgets/elite_ranking.dart';
 import 'package:nexus_ranking_system/features/rank/widgets/filtering_button.dart';
 import 'package:nexus_ranking_system/features/rank/widgets/rest_of_members.dart';
 import 'package:nexus_ranking_system/models/member.dart';
-import 'package:nexus_ranking_system/utils/app_bar_delegate.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RankScreen extends StatelessWidget {
@@ -37,41 +36,34 @@ class RankScreen extends StatelessWidget {
                 "Members Ranking",
               ),
             ),
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: SliverAppBarDelegate(
-                minHeight: 80, 
-                maxHeight: 80, 
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: DynamicFilteringButton(
-                      onChanged: (field) => rankSwitchController.changeOrderFieldID(field.id),
-                    ),
-                  ),
-                ),
-              )
-            ),
           ], 
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: SingleChildScrollView(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 500),
-                child: GetBuilder<RankSwitchController>(
-                  dispose: (state) => Get.delete<RankSwitchController>(),
-                  builder: (_) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        EleteRanking(orderFieldID: rankSwitchController.orderFieldID),
-                        const SizedBox(height: 30),
-                        RestOfMembers(orderFieldID: rankSwitchController.orderFieldID),
-                        const SizedBox(height: 20)
-                      ],
-                    );
-                  }
+                child: Column(
+                  children: [
+                    const SizedBox(height: 10),
+                    DynamicFilteringButton(
+                      onChanged: (field) => rankSwitchController.changeOrderFieldID(field.id),
+                    ),
+                    const SizedBox(height: 20),
+                    GetBuilder<RankSwitchController>(
+                      dispose: (state) => Get.delete<RankSwitchController>(),
+                      builder: (_) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            EleteRanking(orderFieldID: rankSwitchController.orderFieldID),
+                            const SizedBox(height: 30),
+                            RestOfMembers(orderFieldID: rankSwitchController.orderFieldID),
+                            const SizedBox(height: 20)
+                          ],
+                        );
+                      }
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -96,7 +88,7 @@ class DynamicFilteringButton extends StatelessWidget {
       stream: RankRepo.getAllFieldsStream(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting || snapshot.data == null) {
-          return const SizedBox();
+          return const LinearProgressIndicator();
         }
 
         final fields = snapshot.data!;
@@ -172,7 +164,7 @@ class CustomDrawer extends StatelessWidget {
                 trailing: const Icon(Icons.arrow_forward_ios, size: 15,),
                 onTap: () async => await launchUrl(Uri.parse("mailto:m_ouchene@estin.dz&subject=Mobile App Error")),
                 title: Text(
-                  'Scores',
+                  'Help',
                   style: TextStyles.style8.copyWith(
                     color: CustomColors.black1
                   ),
@@ -216,7 +208,7 @@ class _ScoreInfoState extends State<ScoreInfo> {
             )
           ),
           title: Text(
-            'Help',
+            'Scores',
             style: TextStyles.style8.copyWith(
               color: CustomColors.black1
             ),

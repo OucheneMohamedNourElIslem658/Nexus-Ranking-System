@@ -24,7 +24,10 @@ class EleteRanking extends StatelessWidget {
             final isWaiting = snapshot.connectionState == ConnectionState.waiting || snapshot.data == null;
 
             if (isWaiting) {
-              return const LinearProgressIndicator();
+              return const Opacity(
+                opacity: 0,
+                child: LinearProgressIndicator()
+              );
             }
 
             final members = snapshot.data!; 
@@ -103,6 +106,7 @@ class ThirdMember extends StatelessWidget {
         Grade(
           imageURL: thirdMember.imageURL,
           addCrown: false,
+          classment: 3,
           firstGradientColor: CustomColors.orange2,
           secondGradientColor: CustomColors.orange3,
         )
@@ -157,6 +161,7 @@ class FirstMember extends StatelessWidget {
           padding: const EdgeInsets.only(right: 18),
           child: Grade(
             imageURL: firstMember.imageURL,
+            classment: 1,
           ),
         )
       ],
@@ -211,6 +216,7 @@ class SecondMember extends StatelessWidget {
         Grade(
           imageURL: secondMember.imageURL,
           addCrown: false,
+          classment: 2,
           firstGradientColor: CustomColors.orange1,
           secondGradientColor: CustomColors.red1,
         ),
@@ -232,11 +238,13 @@ class Grade extends StatelessWidget {
     this.imageURL, 
     this.firstGradientColor = CustomColors.purple1, 
     this.secondGradientColor = CustomColors.pink1,
+    required this.classment,
   });
 
   final bool addCrown;
   final String? imageURL;
   final Color firstGradientColor, secondGradientColor;
+  final int classment;
 
   @override
   Widget build(BuildContext context) {
@@ -287,8 +295,8 @@ class Grade extends StatelessWidget {
                   alignment: Alignment.center,
                   child: Transform.rotate(
                     angle: -3.14/4,
-                    child: const Text(
-                      '1',
+                    child: Text(
+                      classment.toString(),
                       style: TextStyles.style4,
                     ),
                   ),
