@@ -52,3 +52,5 @@ app.*.map.json
 /pubspec.lock
 /test/
 /lib/firebase_options.dart
+/firebase.json
+/.firebaserc

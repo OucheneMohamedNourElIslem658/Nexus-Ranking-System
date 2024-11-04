@@ -96,7 +96,7 @@ class DynamicFilteringButton extends StatelessWidget {
       stream: RankRepo.getAllFieldsStream(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting || snapshot.data == null) {
-          return const LinearProgressIndicator();
+          return const SizedBox();
         }
 
         final fields = snapshot.data!;
@@ -172,7 +172,7 @@ class CustomDrawer extends StatelessWidget {
                 trailing: const Icon(Icons.arrow_forward_ios, size: 15,),
                 onTap: () async => await launchUrl(Uri.parse("mailto:m_ouchene@estin.dz&subject=Mobile App Error")),
                 title: Text(
-                  'Help',
+                  'Scores',
                   style: TextStyles.style8.copyWith(
                     color: CustomColors.black1
                   ),

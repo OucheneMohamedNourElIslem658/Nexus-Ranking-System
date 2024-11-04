@@ -24,10 +24,7 @@ class EleteRanking extends StatelessWidget {
             final isWaiting = snapshot.connectionState == ConnectionState.waiting || snapshot.data == null;
 
             if (isWaiting) {
-              return const Opacity(
-                opacity: 0,
-                child: LinearProgressIndicator()
-              );
+              return const LinearProgressIndicator();
             }
 
             final members = snapshot.data!; 

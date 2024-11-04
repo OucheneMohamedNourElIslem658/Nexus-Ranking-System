@@ -10,23 +10,26 @@ class AuthScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              "Welcome Wizard!",
-              style: TextStyles.style10,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              "Sign In to see your rank",
-              style: TextStyles.style2.copyWith(
-                color: CustomColors.grey1
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                "Welcome Wizard!",
+                style: TextStyles.style10,
               ),
-            ),
-            const SizedBox(height: 50),
-            const GoogleSignInButton(),
-          ],
+              const SizedBox(height: 10),
+              Text(
+                "Sign In to see your rank",
+                style: TextStyles.style2.copyWith(
+                  color: CustomColors.grey1
+                ),
+              ),
+              const SizedBox(height: 50),
+              const GoogleSignInButton(),
+            ],
+          ),
         ),
       ),
     );
