@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nexus_ranking_system/constents/custom_colors.dart';
 import 'package:nexus_ranking_system/constents/text_styles.dart';
-
-enum Filter {
-  all,
-  mobile,
-  web,
-  backend,
-}
+import 'package:nexus_ranking_system/models/member.dart';
 
 class FilteringButton extends StatefulWidget {
   const FilteringButton({
@@ -17,16 +11,16 @@ class FilteringButton extends StatefulWidget {
     required this.onChanged,
   });
 
-  final List<Filter> filters;
-  final Filter initialFilter;
-  final ValueChanged<Filter> onChanged;
+  final List<Field> filters;
+  final Field initialFilter;
+  final ValueChanged<Field> onChanged;
 
   @override
   State<FilteringButton> createState() => _FilteringButtonState();
 }
 
 class _FilteringButtonState extends State<FilteringButton> {
-  late Filter _selectedFilter;
+  late Field _selectedFilter;
   var alignment = Alignment.center;
 
   @override
@@ -36,7 +30,7 @@ class _FilteringButtonState extends State<FilteringButton> {
     alignment = _calculateAlignment(_selectedFilter);
   }
 
-  Alignment _calculateAlignment(Filter filter) {
+  Alignment _calculateAlignment(Field filter) {
     final index = widget.filters.indexOf(filter);
     final itemCount = widget.filters.length;
     double horizontalAlignment = (2 * index / (itemCount - 1)) - 1;
@@ -54,6 +48,7 @@ class _FilteringButtonState extends State<FilteringButton> {
 
     return Container(
       padding: const EdgeInsets.all(5),
+      constraints: const BoxConstraints(maxWidth: 500),
       decoration: BoxDecoration(
         color: CustomColors.black2,
         borderRadius: BorderRadius.circular(10),
@@ -95,7 +90,7 @@ class _FilteringButtonState extends State<FilteringButton> {
                         },
                         child: FilterInfo(
                           title: widget.filters[index].name,
-                          memberCount: 12,
+                          memberCount: widget.filters[index].membersCount,
                         ),
                       ),
                     );
@@ -132,7 +127,7 @@ class FilterInfo extends StatelessWidget {
           style: TextStyles.style2,
         ),
         Text(
-          '$memberCount member',
+          '$memberCount members',
           textAlign: TextAlign.center,
           style: TextStyles.style3,
         ),

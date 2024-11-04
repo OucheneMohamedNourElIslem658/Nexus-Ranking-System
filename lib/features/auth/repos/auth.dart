@@ -23,7 +23,10 @@ class AuthRepo {
         final user = userCredential.user;
         if (isNewUser && user != null) {
           await _firestore.collection('members').doc(user.uid).set({
+            'uid': user.uid,
             'name': user.displayName,
+            'imageURL': user.photoURL,
+            'email': user.email,
             'scores': []
           });
         }

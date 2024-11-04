@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:nexus_ranking_system/commun/repos/rank.dart';
 import 'package:nexus_ranking_system/constents/custom_colors.dart';
 import 'package:nexus_ranking_system/constents/text_styles.dart';
+import 'package:nexus_ranking_system/features/auth/repos/auth.dart';
+import 'package:nexus_ranking_system/models/member.dart';
 
 class RestOfMembers extends StatelessWidget {
   const RestOfMembers({
@@ -11,29 +14,45 @@ class RestOfMembers extends StatelessWidget {
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 500),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Rest of members',
-            style: TextStyles.style7,
-          ),
-          const SizedBox(height: 15),
-          Column(
-            children: List.generate(
-              10,
-              (index) => Padding(
-                padding: EdgeInsets.only(top: index != 0 ? 10 : 0),
-                child: MemberItem(
-                  name: 'You',
-                  email: 'm_ouchene@estin.dz',
-                  rank: 100,
-                  isMe: index == 0,
+      child: StreamBuilder<List<Member>?>(
+        stream: RankRepo.getMembersStream(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const SizedBox();
+          }
+
+          final members = snapshot.data ?? [];
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'All members',
+                style: TextStyles.style7,
+              ),
+              const SizedBox(height: 15),
+              Column(
+                children: List.generate(
+                  members.length,
+                  (index) {
+                    final member = members[index];
+                    final isMe = member.uid == AuthRepo.currentUser!.uid;
+                    return Padding(
+                      padding: EdgeInsets.only(top: index != 0 ? 10 : 0),
+                      child: MemberItem(
+                        name: !isMe ? member.name : 'You',
+                        email: !isMe ? member.email : null,
+                        rank: member.totalScore,
+                        isMe: isMe,
+                        score: member.totalScore,
+                      ),
+                    );
+                  }
                 ),
               )
-            ),
-          )
-        ],
+            ],
+          );
+        }
       ),
     );
   }
@@ -43,15 +62,17 @@ class MemberItem extends StatelessWidget {
   const MemberItem({
     super.key, 
     required this.name, 
-    required this.email, 
+    this.email, 
     required this.rank, 
+    required this.score,
     this.isMe = false,
   });
 
   final String name;
-  final String email;
+  final String? email;
   final int rank;
   final bool isMe;
+  final int score;
 
   @override
   Widget build(BuildContext context) {
@@ -86,12 +107,26 @@ class MemberItem extends StatelessWidget {
                   name,
                   style: TextStyles.style8,
                 ),
-                Text(
-                  email,
+                if (email != null) Text(
+                  email!,
                   style: TextStyles.style9,
                 )
               ],
             )
+          ),
+          const SizedBox(width: 10),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white)
+            ),
+            child: Text(
+              score.toString(),
+              style: TextStyles.style9.copyWith(
+                color: Colors.white
+              ),
+            ),
           )
         ],
       ),

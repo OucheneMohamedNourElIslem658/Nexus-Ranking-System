@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:nexus_ranking_system/commun/repos/rank.dart';
 import 'package:nexus_ranking_system/features/auth/repos/auth.dart';
 import 'package:nexus_ranking_system/constents/custom_colors.dart';
 import 'package:nexus_ranking_system/constents/text_styles.dart';
 import 'package:nexus_ranking_system/features/rank/widgets/elite_ranking.dart';
 import 'package:nexus_ranking_system/features/rank/widgets/filtering_button.dart';
 import 'package:nexus_ranking_system/features/rank/widgets/rest_of_members.dart';
+import 'package:nexus_ranking_system/models/member.dart';
 import 'package:nexus_ranking_system/utils/app_bar_delegate.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -37,15 +39,11 @@ class RankScreen extends StatelessWidget {
               delegate: SliverAppBarDelegate(
                 minHeight: 80, 
                 maxHeight: 80, 
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
+                child: const Padding(
+                  padding: EdgeInsets.all(10),
                   child: Align(
                     alignment: Alignment.topCenter,
-                    child: FilteringButton(
-                      onChanged: (value) {},
-                      filters: const [Filter.all, Filter.mobile, Filter.web, Filter.backend],
-                      initialFilter: Filter.mobile,
-                    ),
+                    child: DynamicFilteringButton(),
                   ),
                 ),
               )
@@ -70,6 +68,32 @@ class RankScreen extends StatelessWidget {
           ),
         )
       ),
+    );
+  }
+}
+
+class DynamicFilteringButton extends StatelessWidget {
+  const DynamicFilteringButton({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<List<Field>?>(
+      stream: RankRepo.getAllFieldsStream(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting || snapshot.data == null) {
+          return const SizedBox();
+        }
+
+        final fields = snapshot.data!;
+
+        return FilteringButton(
+          onChanged: (value) {},
+          filters: fields,
+          initialFilter: fields.first,
+        );
+      }
     );
   }
 }

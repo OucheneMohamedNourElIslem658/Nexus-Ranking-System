@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:nexus_ranking_system/commun/repos/rank.dart';
 import 'package:nexus_ranking_system/constents/custom_colors.dart';
 import 'package:nexus_ranking_system/constents/text_styles.dart';
+import 'package:nexus_ranking_system/models/member.dart';
 
 class EleteRanking extends StatelessWidget {
   const EleteRanking({super.key});
@@ -11,135 +13,203 @@ class EleteRanking extends StatelessWidget {
     return FittedBox(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 500),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Expanded(
-              flex: 4,
-              child: Stack(
-                alignment: Alignment.topCenter,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 70),
-                    child: Container(
-                      height: 165,
-                      decoration: const BoxDecoration(
-                        color: CustomColors.black2,
-                        borderRadius: BorderRadius.horizontal(
-                          left: Radius.circular(15)
-                        )
-                      ),
-                      alignment: Alignment.center,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            'Rachel',
-                            style: TextStyles.style5,
-                          ),
-                          const SizedBox(height: 7),
-                          Text(
-                            '1200',
-                            style: TextStyles.style6.copyWith(
-                              color: CustomColors.red1
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const Grade(
-                    addCrown: false,
-                    firstGradientColor: CustomColors.orange1,
-                    secondGradientColor: CustomColors.red1,
-                  ),
-                ],
-              )
-            ),
-            Expanded(
-              flex: 5,
-              child: Stack(
-                alignment: Alignment.topCenter,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 100),
-                    child: Container(
-                      height: 200,
-                      decoration: const BoxDecoration(
-                        color: CustomColors.black4,
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(40)
-                        )
-                      ),
-                      alignment: Alignment.center,
-                      child: const Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Rachel',
-                            style: TextStyles.style5,
-                          ),
-                          SizedBox(height: 7),
-                          Text(
-                            '1200',
-                            style: TextStyles.style6,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(right: 18),
-                    child: Grade(),
-                  )
-                ],
-              )
-            ),
-            Expanded(
-              flex: 4,
-              child: Stack(
-                alignment: Alignment.topCenter,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 70),
-                    child: Container(
-                      height: 150,
-                      decoration: const BoxDecoration(
-                        color: CustomColors.black2,
-                        borderRadius: BorderRadius.horizontal(
-                          right: Radius.circular(15)
-                        )
-                      ),
-                      alignment: Alignment.center,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            'Rachel',
-                            style: TextStyles.style5,
-                          ),
-                          const SizedBox(height: 7),
-                          Text(
-                            '1200',
-                            style: TextStyles.style6.copyWith(
-                              color: CustomColors.orange3
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const Grade(
-                    addCrown: false,
-                    firstGradientColor: CustomColors.orange2,
-                    secondGradientColor: CustomColors.orange3,
-                  )
-                ],
-              )
-            )
-          ],
+        child: StreamBuilder<List<Member>?>(
+          stream: RankRepo.getMembersStream(limit: 3),
+          builder: (context, snapshot) {
+            final isWaiting = snapshot.connectionState == ConnectionState.waiting || snapshot.data == null;
+
+            if (isWaiting) {
+              return const LinearProgressIndicator();
+            }
+
+            final members = snapshot.data!; 
+            final firstMember = members.first;
+            final secondMember = members[1];
+            final thirdMember = members[2];
+
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  flex: 4,
+                  child: SecondMember(secondMember: secondMember)
+                ),
+                Expanded(
+                  flex: 5,
+                  child: FirstMember(firstMember: firstMember)
+                ),
+                Expanded(
+                  flex: 4,
+                  child: ThirdMember(thirdMember: thirdMember)
+                )
+              ],
+            );
+          }
         ),
       ),
+    );
+  }
+}
+
+class ThirdMember extends StatelessWidget {
+  const ThirdMember({
+    super.key,
+    required this.thirdMember,
+  });
+
+  final Member thirdMember;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 70),
+          child: Container(
+            height: 150,
+            padding: const EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+              color: CustomColors.black2,
+              borderRadius: BorderRadius.horizontal(
+                right: Radius.circular(15)
+              )
+            ),
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  thirdMember.name,
+                  textAlign: TextAlign.center,
+                  style: TextStyles.style5,
+                ),
+                const SizedBox(height: 7),
+                Text(
+                  '${thirdMember.totalScore}',
+                  style: TextStyles.style6.copyWith(
+                    color: CustomColors.orange3
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Grade(
+          imageURL: thirdMember.imageURL,
+          addCrown: false,
+          firstGradientColor: CustomColors.orange2,
+          secondGradientColor: CustomColors.orange3,
+        )
+      ],
+    );
+  }
+}
+
+class FirstMember extends StatelessWidget {
+  const FirstMember({
+    super.key,
+    required this.firstMember,
+  });
+
+  final Member firstMember;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 100),
+          child: Container(
+            height: 200,
+            padding: const EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+              color: CustomColors.black4,
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(40)
+              )
+            ),
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  firstMember.name,
+                  textAlign: TextAlign.center,
+                  style: TextStyles.style5,
+                ),
+                const SizedBox(height: 7),
+                Text(
+                  '${firstMember.totalScore}',
+                  style: TextStyles.style6,
+                ),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 18),
+          child: Grade(
+            imageURL: firstMember.imageURL,
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class SecondMember extends StatelessWidget {
+  const SecondMember({
+    super.key,
+    required this.secondMember,
+  });
+
+  final Member secondMember;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 70),
+          child: Container(
+            height: 165,
+            padding: const EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+              color: CustomColors.black2,
+              borderRadius: BorderRadius.horizontal(
+                left: Radius.circular(15)
+              )
+            ),
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  secondMember.name,
+                  textAlign: TextAlign.center,
+                  style: TextStyles.style5,
+                ),
+                const SizedBox(height: 7),
+                Text(
+                  '${secondMember.totalScore}',
+                  style: TextStyles.style6.copyWith(
+                    color: CustomColors.red1
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Grade(
+          imageURL: secondMember.imageURL,
+          addCrown: false,
+          firstGradientColor: CustomColors.orange1,
+          secondGradientColor: CustomColors.red1,
+        ),
+      ],
     );
   }
 }

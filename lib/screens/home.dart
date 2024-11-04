@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:nexus_ranking_system/features/admin/screens/landing.dart';
 
 import 'package:nexus_ranking_system/features/auth/repos/auth.dart';
 import 'package:nexus_ranking_system/features/auth/screens/auth.dart';
@@ -27,7 +28,7 @@ class HomeScreen extends StatelessWidget {
         },
       );
     } else {
-      return const WaitingScreen();
+      return const AdminBoard();
     }
   }
 }
