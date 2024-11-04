@@ -1,11 +1,17 @@
 class Field {
   final String name;
+  final String? id;
   final int membersCount;
 
-  Field({required this.name, this.membersCount = 0});
+  Field({
+    this.id, 
+    required this.name, 
+    this.membersCount = 0
+  });
 
   factory Field.fromJson(Map<String, dynamic> json) {
     return Field(
+      id: json['id'] ?? '',
       name: json['name'] ?? '',
       membersCount: json['membersCount'] ?? 0
     );
@@ -13,6 +19,7 @@ class Field {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       'membersCount': membersCount
     };

@@ -81,6 +81,7 @@ class RankRepo {
         futures.add(Future(() async {
           int membersCount = await _fetchMembersCount(fieldName);
           return Field.fromJson({
+            'id': doc['id'],
             'name': fieldName,
             'membersCount': membersCount,
           });

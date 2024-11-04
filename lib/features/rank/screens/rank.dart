@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:nexus_ranking_system/commun/repos/rank.dart';
 import 'package:nexus_ranking_system/features/auth/repos/auth.dart';
 import 'package:nexus_ranking_system/constents/custom_colors.dart';
 import 'package:nexus_ranking_system/constents/text_styles.dart';
+import 'package:nexus_ranking_system/features/rank/controllers/rank_switch_controller.dart';
 import 'package:nexus_ranking_system/features/rank/widgets/elite_ranking.dart';
 import 'package:nexus_ranking_system/features/rank/widgets/filtering_button.dart';
 import 'package:nexus_ranking_system/features/rank/widgets/rest_of_members.dart';
@@ -15,6 +17,7 @@ class RankScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final rankSwitchController = Get.put(RankSwitchController());
     return SafeArea(
       child: Scaffold(
         backgroundColor: CustomColors.black1,
@@ -39,11 +42,13 @@ class RankScreen extends StatelessWidget {
               delegate: SliverAppBarDelegate(
                 minHeight: 80, 
                 maxHeight: 80, 
-                child: const Padding(
-                  padding: EdgeInsets.all(10),
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
                   child: Align(
                     alignment: Alignment.topCenter,
-                    child: DynamicFilteringButton(),
+                    child: DynamicFilteringButton(
+                      onChanged: (field) => rankSwitchController.changeOrderFieldID(field.id),
+                    ),
                   ),
                 ),
               )
@@ -54,14 +59,18 @@ class RankScreen extends StatelessWidget {
             child: SingleChildScrollView(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 500),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    EleteRanking(),
-                    SizedBox(height: 30),
-                    RestOfMembers(),
-                    SizedBox(height: 20)
-                  ],
+                child: GetBuilder<RankSwitchController>(
+                  builder: (_) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        EleteRanking(orderFieldID: rankSwitchController.orderFieldID),
+                        const SizedBox(height: 30),
+                        RestOfMembers(orderFieldID: rankSwitchController.orderFieldID),
+                        const SizedBox(height: 20)
+                      ],
+                    );
+                  }
                 ),
               ),
             ),
@@ -75,7 +84,10 @@ class RankScreen extends StatelessWidget {
 class DynamicFilteringButton extends StatelessWidget {
   const DynamicFilteringButton({
     super.key,
+    this.onChanged,
   });
+
+  final void Function(Field)? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -83,15 +95,14 @@ class DynamicFilteringButton extends StatelessWidget {
       stream: RankRepo.getAllFieldsStream(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting || snapshot.data == null) {
-          return const SizedBox();
+          return const LinearProgressIndicator();
         }
 
         final fields = snapshot.data!;
 
         return FilteringButton(
-          onChanged: (value) {},
+          onChanged: onChanged,
           filters: fields,
-          initialFilter: fields.first,
         );
       }
     );

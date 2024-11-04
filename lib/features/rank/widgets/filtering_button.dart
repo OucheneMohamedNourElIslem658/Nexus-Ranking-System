@@ -7,13 +7,11 @@ class FilteringButton extends StatefulWidget {
   const FilteringButton({
     super.key,
     required this.filters,
-    required this.initialFilter,
-    required this.onChanged,
+    this.onChanged,
   });
 
   final List<Field> filters;
-  final Field initialFilter;
-  final ValueChanged<Field> onChanged;
+  final ValueChanged<Field>? onChanged;
 
   @override
   State<FilteringButton> createState() => _FilteringButtonState();
@@ -21,18 +19,23 @@ class FilteringButton extends StatefulWidget {
 
 class _FilteringButtonState extends State<FilteringButton> {
   late Field _selectedFilter;
+  late List<Field> filters;
   var alignment = Alignment.center;
 
   @override
   void initState() {
     super.initState();
-    _selectedFilter = widget.initialFilter;
+    filters = [
+      Field(id: null, name: 'All'),
+      ...widget.filters
+    ];
+    _selectedFilter = filters.first;
     alignment = _calculateAlignment(_selectedFilter);
   }
 
   Alignment _calculateAlignment(Field filter) {
-    final index = widget.filters.indexOf(filter);
-    final itemCount = widget.filters.length;
+    final index = filters.indexOf(filter);
+    final itemCount = filters.length;
     double horizontalAlignment = (2 * index / (itemCount - 1)) - 1;
     return Alignment(horizontalAlignment, 0);
   }
@@ -44,7 +47,7 @@ class _FilteringButtonState extends State<FilteringButton> {
       width: 1.25,
       color: CustomColors.grey1,
     );
-    final itemCount = widget.filters.length;
+    final itemCount = filters.length;
 
     return Container(
       padding: const EdgeInsets.all(5),
@@ -78,7 +81,7 @@ class _FilteringButtonState extends State<FilteringButton> {
                 children: List.generate(
                   itemCount,
                   (index) {
-                    final filter = widget.filters[index];
+                    final filter = filters[index];
                     return Expanded(
                       child: GestureDetector(
                         onTap: () {
@@ -86,11 +89,12 @@ class _FilteringButtonState extends State<FilteringButton> {
                             _selectedFilter = filter;
                             alignment = _calculateAlignment(filter);
                           });
-                          widget.onChanged(filter);
+                          if (widget.onChanged != null) {
+                            widget.onChanged!(filter);
+                          }
                         },
                         child: FilterInfo(
-                          title: widget.filters[index].name,
-                          memberCount: widget.filters[index].membersCount,
+                          title: filters[index].name,
                         ),
                       ),
                     );
@@ -109,29 +113,16 @@ class FilterInfo extends StatelessWidget {
   const FilterInfo({
     super.key, 
     required this.title, 
-    required this.memberCount,
   });
 
   final String title;
-  final int memberCount;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(
-          title,
-          textAlign: TextAlign.center,
-          style: TextStyles.style2,
-        ),
-        Text(
-          '$memberCount members',
-          textAlign: TextAlign.center,
-          style: TextStyles.style3,
-        ),
-      ],
+    return Text(
+      title,
+      textAlign: TextAlign.center,
+      style: TextStyles.style2,
     );
   }
 }

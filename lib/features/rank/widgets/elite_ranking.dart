@@ -6,7 +6,12 @@ import 'package:nexus_ranking_system/constents/text_styles.dart';
 import 'package:nexus_ranking_system/models/member.dart';
 
 class EleteRanking extends StatelessWidget {
-  const EleteRanking({super.key});
+  const EleteRanking({
+    super.key, 
+    this.orderFieldID
+  });
+
+  final String? orderFieldID;
 
   @override
   Widget build(BuildContext context) {
@@ -14,12 +19,15 @@ class EleteRanking extends StatelessWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 500),
         child: StreamBuilder<List<Member>?>(
-          stream: RankRepo.getMembersStream(limit: 3),
+          stream: RankRepo.getMembersStream(limit: 3, orderFieldID: orderFieldID),
           builder: (context, snapshot) {
             final isWaiting = snapshot.connectionState == ConnectionState.waiting || snapshot.data == null;
 
             if (isWaiting) {
-              return const LinearProgressIndicator();
+              return const Opacity(
+                opacity: 0,
+                child: LinearProgressIndicator()
+              );
             }
 
             final members = snapshot.data!; 

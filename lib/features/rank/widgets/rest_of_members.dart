@@ -8,14 +8,17 @@ import 'package:nexus_ranking_system/models/member.dart';
 class RestOfMembers extends StatelessWidget {
   const RestOfMembers({
     super.key,
+    this.orderFieldID
   });
+
+  final String? orderFieldID;
 
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 500),
       child: StreamBuilder<List<Member>?>(
-        stream: RankRepo.getMembersStream(),
+        stream: RankRepo.getMembersStream(orderFieldID: orderFieldID),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const SizedBox();
