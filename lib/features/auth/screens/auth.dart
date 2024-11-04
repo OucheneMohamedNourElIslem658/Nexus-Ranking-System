@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nexus_ranking_system/features/auth/repos/oauth_sng_in_buttons.dart';
+import 'package:nexus_ranking_system/features/auth/repos/oauth_sign_in_buttons.dart';
 import 'package:nexus_ranking_system/constents/custom_colors.dart';
 import 'package:nexus_ranking_system/constents/text_styles.dart';
 

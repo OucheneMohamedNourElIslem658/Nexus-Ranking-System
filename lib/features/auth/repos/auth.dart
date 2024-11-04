@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:nexus_ranking_system/utils/messengers.dart';
 
 class AuthRepo {
   static final _auth = FirebaseAuth.instance;
@@ -32,11 +33,7 @@ class AuthRepo {
         }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString())
-        )
-      );
+      Messengers.showSnackBar(context, message: e.toString());
     }
   }
 
@@ -44,11 +41,7 @@ class AuthRepo {
     try {
       _auth.signOut();
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString())
-        )
-      );
+      Messengers.showSnackBar(context, message: e.toString());
     }
   }
 }

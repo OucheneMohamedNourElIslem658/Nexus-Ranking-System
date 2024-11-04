@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:nexus_ranking_system/features/auth/repos/auth.dart';
 import 'package:nexus_ranking_system/models/member.dart';
 
 class RankRepo {
@@ -62,15 +61,37 @@ class RankRepo {
     });
   }
 
-  static Future<Score?> getCurrentUserScore() async {
-    final currentUser = AuthRepo.currentUser; 
-    final memberDoc = await _firestore.collection('members').doc(currentUser!.uid).get();
-    if (memberDoc.exists) {
-      final scoresList = memberDoc.data()?['scores'] as List<dynamic>? ?? [];
-      List<Score> scores = scoresList.map((scoreJson) => Score.fromJson(scoreJson)).toList();
-      return scores.isNotEmpty ? scores[0] : null;
-    }
-    return null;
+  static Future<Member?> getCurrentUserScores(String uid) async {
+    final memberDoc = await _firestore.collection('members').doc(uid).get();
+    if (!memberDoc.exists) return null;
+
+    final memberData = memberDoc.data();
+    final scoresList = memberData?['scores'] as List<dynamic>? ?? [];
+
+    List<Score> scores = await Future.wait(
+      scoresList.map((scoreJson) async {
+        final score = Score.fromJson(scoreJson);
+
+        if (score.field.isNotEmpty) {
+          final fieldDoc = await _firestore.collection('fields').doc(score.field).get();
+          if (fieldDoc.exists) {
+            score.fieldInfo = Field.fromJson(fieldDoc.data()!);
+          }
+        }
+        return score;
+      }).toList(),
+    );
+
+    int totalScore = scores.fold(0, (sum, score) => sum + score.points);
+
+    return Member(
+      uid: uid,
+      name: memberData?['name'] ?? 'Unknown',
+      email: memberData?['email'] ?? 'undefined email',
+      imageURL: memberData?['imageURL'],
+      scores: scores,
+      totalScore: totalScore,
+    );
   }
 
   static Stream<List<Field>> getAllFieldsStream() {

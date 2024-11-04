@@ -29,8 +29,13 @@ class Field {
 class Score {
   final int points;
   final String field;
+  Field? fieldInfo;
 
-  Score({required this.points, required this.field});
+  Score({
+    required this.points, 
+    required this.field,
+    this.fieldInfo
+  });
 
   factory Score.fromJson(Map<String, dynamic> json) {
     return Score(

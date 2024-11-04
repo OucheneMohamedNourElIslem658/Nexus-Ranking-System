@@ -60,6 +60,7 @@ class RankScreen extends StatelessWidget {
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 500),
                 child: GetBuilder<RankSwitchController>(
+                  dispose: (state) => Get.delete<RankSwitchController>(),
                   builder: (_) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -145,7 +146,8 @@ class CustomDrawer extends StatelessWidget {
           Text(
             email ?? 'undefined email',
           ),
-          const SizedBox(height: 50),
+          const SizedBox(height: 30),
+          const ScoreInfo(),
           Column(
             children: [
               ListTile(
@@ -177,9 +179,99 @@ class CustomDrawer extends StatelessWidget {
                 ),
               )
             ],
-          )
+          ),
         ],
       ),
+    );
+  }
+}
+
+class ScoreInfo extends StatefulWidget {
+  const ScoreInfo({
+    super.key,
+  });
+
+  @override
+  State<ScoreInfo> createState() => _ScoreInfoState();
+}
+
+class _ScoreInfoState extends State<ScoreInfo> {
+  var expand = false;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ListTile(
+          leading: const Icon(Icons.military_tech),
+          trailing: GestureDetector(
+            onTap: () => setState(() {
+              expand = !expand;
+            }),
+            child: AnimatedRotation(
+              alignment: Alignment.center,
+              duration: const Duration(milliseconds: 100),
+              turns: expand ? 0.25 : 0,
+              child: const Icon(Icons.arrow_forward_ios, size: 15)
+            )
+          ),
+          title: Text(
+            'Help',
+            style: TextStyles.style8.copyWith(
+              color: CustomColors.black1
+            ),
+          ),
+        ),
+        Visibility(
+          visible: expand,
+          child: FutureBuilder<Member?>(
+            future: RankRepo.getCurrentUserScores(AuthRepo.currentUser!.uid), 
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting || snapshot.data == null) {
+                return const SizedBox();
+              }
+          
+              final member = snapshot.data!;
+              final scores = member.scores;
+          
+              return Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: Column(
+                  children: List.generate(
+                    scores.length, 
+                    (index) {
+                      final score = scores[index];
+                      final field = score.fieldInfo!;
+                        
+                      return ListTile(
+                        title: Text(
+                          field.name,
+                          style: TextStyles.style12.copyWith(
+                            color: CustomColors.black1
+                          ),
+                        ),
+                        trailing: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: CustomColors.black1
+                            )
+                          ),
+                          child: Text(
+                            score.points.toString(),
+                            style: TextStyles.style13,
+                          ),
+                        ),
+                      );
+                    }
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
