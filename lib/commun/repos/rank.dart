@@ -72,7 +72,7 @@ class RankRepo {
       scoresList.map((scoreJson) async {
         final score = Score.fromJson(scoreJson);
 
-        if (score.field.isNotEmpty) {
+        if (score.field!.isNotEmpty) {
           final fieldDoc = await _firestore.collection('fields').doc(score.field).get();
           if (fieldDoc.exists) {
             score.fieldInfo = Field.fromJson(fieldDoc.data()!);

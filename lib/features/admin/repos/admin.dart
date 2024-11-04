@@ -6,9 +6,9 @@ import 'package:nexus_ranking_system/models/member.dart';
 import 'package:nexus_ranking_system/utils/messengers.dart';
 
 class AdminRepository {
-  final _firestore = FirebaseFirestore.instance;
+  static final _firestore = FirebaseFirestore.instance;
 
-  Future<void> createField(BuildContext context,{required String name}) async {
+  static Future<void> createField(BuildContext context,{required String name}) async {
     try {
       await _firestore.collection('fields').add(
         Field(name: name).toJson()
@@ -18,7 +18,19 @@ class AdminRepository {
     }
   }
 
-  Future<void> updateField(BuildContext context,String id,{required String newFieldName}) async {
+  static Future<List<Field>> getFields() async {
+    final snapshot = await FirebaseFirestore.instance.collection('fields').get();
+    final fields = snapshot.docs.map((doc) {
+      return Field.fromJson({
+        'id': doc.id,
+        ...doc.data(),
+      });
+    }).toList();
+
+    return fields;
+  }
+
+  static Future<void> updateField(BuildContext context,String id,{required String newFieldName}) async {
     try {
       await _firestore.collection('fields').doc(id).update({
         'name': newFieldName
@@ -28,7 +40,7 @@ class AdminRepository {
     }
   }
 
-  Future<void> deleteField(BuildContext context,String id) async {
+  static Future<void> deleteField(BuildContext context,String id) async {
     try {
       await _firestore.collection('fields').doc(id).delete();
     } catch (e) {
@@ -36,7 +48,7 @@ class AdminRepository {
     }
   }
 
-  Future<void> updateUserScore(BuildContext context, {required String userId, required String fieldId, required int newScore}) async {
+  static Future<void> updateUserScore(BuildContext context, {required String userId, required String fieldId, required int newScore}) async {
     try {
       final userDoc = await _firestore.collection('members').doc(userId).get();
       if (!userDoc.exists) throw Exception('User not found');

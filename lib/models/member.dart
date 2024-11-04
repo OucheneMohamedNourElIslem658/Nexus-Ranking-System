@@ -27,13 +27,13 @@ class Field {
 }
 
 class Score {
-  final int points;
-  final String field;
+  int points;
+  String? field;
   Field? fieldInfo;
 
   Score({
     required this.points, 
-    required this.field,
+    this.field,
     this.fieldInfo
   });
 
